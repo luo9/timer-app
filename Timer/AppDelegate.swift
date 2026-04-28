@@ -239,7 +239,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
 
   private func registerDefaults() {
     UserDefaults.standard.register(defaults: [
-      MVUserDefaultsKeys.staysOnTop: false,
+      MVUserDefaultsKeys.staysOnTop: true,
       MVUserDefaultsKeys.soundIndex: 0
     ])
   }

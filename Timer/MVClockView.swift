@@ -16,14 +16,6 @@ final class MVClockView: NSView {
     return view
   }()
 
-  private let timerTimeLabel: MVLabel = {
-    let label = MVLabel(frame: NSRect(x: 0, y: 94, width: 150, height: 20))
-    label.font = NSFont.systemFont(ofSize: 15, weight: .medium)
-    label.alignment = .center
-    label.textColor = NSColor(resource: .timerTime)
-    return label
-  }()
-
   private let timerDisplayLabel: MVLabel = {
     let label = MVLabel(frame: NSRect(x: 0, y: 57, width: 150, height: 25))
     label.string = ""
@@ -33,11 +25,6 @@ final class MVClockView: NSView {
     return label
   }()
 
-  private lazy var timerTimeLabelFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "jj:mm", options: 0, locale: Locale.current)
-    return formatter
-  }()
   var inputSeconds: Bool = false
   var lastTimerSeconds: CGFloat?
   var inDock: Bool = false {
@@ -58,13 +45,7 @@ final class MVClockView: NSView {
       }
     }
   }
-  var timerTime: Date? {
-    didSet {
-      if self.windowIsVisible {
-        self.updateTimeLabel()
-      }
-    }
-  }
+  var timerTime: Date?
   var onTimerComplete: (() -> Void)?
   private var notificationTasks: [Task<Void, Never>] = []
   var currentTimeTask: Task<Void, Never>?
@@ -109,7 +90,6 @@ final class MVClockView: NSView {
 
     self.addSubview(self.clockFaceView)
     self.addSubview(self.pauseIconImageView)
-    self.addSubview(self.timerTimeLabel)
     self.addSubview(self.timerDisplayLabel)
 
     self.updateClockFaceView()
@@ -217,13 +197,11 @@ extension MVClockView {
       ctx.duration = 0.2
       ctx.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
       self.pauseIconImageView.animator().alphaValue = showPauseIcon ? 1 : 0
-      self.timerTimeLabel.animator().alphaValue = showPauseIcon ? 0 : 1
     }
   }
 
   private func updateAllViews() {
     self.updateLabels()
-    self.updateTimeLabel()
     self.layoutSubviews()
   }
 
@@ -257,21 +235,6 @@ extension MVClockView {
 
   func removeBadge() {
     NSApplication.shared.dockTile.badgeLabel = ""
-  }
-
-  private func updateTimeLabel() {
-    let timeString = self.timerTimeLabelFormatter.string(from: self.timerTime ?? Date())
-    self.timerTimeLabel.string = timeString
-
-    if let ampmRange = (
-      timeString.range(of: " AM", options: [.caseInsensitive]) ??
-      timeString.range(of: " PM", options: [.caseInsensitive])
-    ) {
-      self.timerTimeLabel.setFont(
-        NSFont.systemFont(ofSize: 12, weight: .medium),
-        range: NSRange(ampmRange, in: timeString)
-      )
-    }
   }
 
   override func hitTest(_ aPoint: NSPoint) -> NSView? {

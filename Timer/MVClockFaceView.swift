@@ -15,7 +15,7 @@ final class MVClockFaceView: NSView {
     if highlighted {
       self.state = .highlighted
     } else {
-      self.state = (self.window?.isKeyWindow ?? false) ? .focused : .normal
+      self.state = .focused
     }
     self.needsDisplay = true
   }
