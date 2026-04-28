@@ -232,22 +232,15 @@ extension MVClockView {
   }
 
   private func updateLabels() {
-    self.minutesLabel.string = TimerLogic.minutesDisplayString(seconds: self.seconds)
-    let suffixWidth: CGFloat = self.seconds < 60 ? self.minutesLabelSecondsSuffixWidth : self.minutesLabelSuffixWidth
-    self.minutesLabel.sizeToFit()
+    self.timerDisplayLabel.string = TimerLogic.timerDisplayString(seconds: self.seconds)
+    self.timerDisplayLabel.textColor = TimerLogic.isWarningState(seconds: self.seconds)
+      ? NSColor(resource: .timerWarning)
+      : NSColor(resource: .minutes)
+    self.timerDisplayLabel.sizeToFit()
 
-    var frame = self.minutesLabel.frame
-    frame.origin.x = round((self.bounds.width - (frame.size.width - suffixWidth)) / 2)
-    self.minutesLabel.frame = frame
-
-    self.secondsLabel.string = TimerLogic.secondsDisplayString(seconds: self.seconds)
-    if self.seconds >= 60 {
-      self.secondsLabel.sizeToFit()
-
-      frame = self.secondsLabel.frame
-      frame.origin.x = round((self.bounds.width - (frame.size.width - self.secondsSuffixWidth)) / 2)
-      self.secondsLabel.frame = frame
-    }
+    var frame = self.timerDisplayLabel.frame
+    frame.origin.x = round((self.bounds.width - frame.size.width) / 2)
+    self.timerDisplayLabel.frame = frame
   }
 
   private func updateBadge() {
