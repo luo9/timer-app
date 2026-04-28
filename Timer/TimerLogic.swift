@@ -29,6 +29,7 @@ enum TimerLogic {
 
   // MARK: - Display Strings
 
+  @available(*, deprecated, message: "Use timerDisplayString() instead for unified MM:SS format")
   static func minutesDisplayString(seconds: CGFloat) -> String {
     if seconds < 60 {
       return "\(Int(seconds))\""
@@ -36,6 +37,7 @@ enum TimerLogic {
     return "\(Int(floor(seconds / 60)))'"
   }
 
+  @available(*, deprecated, message: "Use timerDisplayString() instead for unified MM:SS format")
   static func secondsDisplayString(seconds: CGFloat) -> String {
     if seconds < 60 {
       return ""
