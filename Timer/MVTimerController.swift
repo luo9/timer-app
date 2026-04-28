@@ -3,7 +3,6 @@ import AVFoundation
 import UserNotifications
 
 final class MVTimerController: NSWindowController {
-  private weak var dockMenuItem: NSMenuItem?
   let clockView = MVClockView()
 
   private var audioPlayer: AVAudioPlayer? // player must be kept in memory
@@ -19,7 +18,6 @@ final class MVTimerController: NSWindowController {
     mainView.controller = self
     self.clockView.onTimerComplete = { [weak self] in self?.handleClockTimer() }
     mainView.addSubview(self.clockView)
-    self.dockMenuItem = mainView.menuItem
 
     self.windowFrameAutosaveName = "TimerWindowAutosaveFrame"
 
@@ -52,11 +50,6 @@ final class MVTimerController: NSWindowController {
     MainActor.assumeIsolated {
       self.clockView.stop()
     }
-  }
-
-  func showInDock(_ state: Bool) {
-    self.clockView.inDock = state
-    self.dockMenuItem?.state = state ? .on : .off
   }
 
   func windowVisibilityChanged(_ visible: Bool) {

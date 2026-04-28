@@ -138,9 +138,6 @@ extension MVClockView {
     self.timerTask?.cancel()
     self.timerTask = nil
 
-    if self.inDock, !self.paused {
-      self.removeBadge()
-    }
   }
 
   func startTimer(seconds: CGFloat) {

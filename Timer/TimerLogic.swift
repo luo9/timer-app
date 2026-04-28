@@ -45,10 +45,6 @@ enum TimerLogic {
     return "\(Int(seconds.truncatingRemainder(dividingBy: 60)))\""
   }
 
-  static func badgeString(minutes: Int, seconds: Int) -> String {
-    String(format: "%02d:%02d", minutes, seconds)
-  }
-
   // MARK: - Keyboard Input
 
   struct DigitInputResult: Sendable {

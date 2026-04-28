@@ -5,7 +5,6 @@ import UserNotifications
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
   private var controllers: [MVTimerController] = []
-  private var currentlyInDock: MVTimerController?
   private var notificationTasks: [Task<Void, Never>] = []
 
   private var staysOnTop = false {
@@ -24,7 +23,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
   func applicationDidFinishLaunching(_: Notification) {
     let controller = MVTimerController()
     self.controllers.append(controller)
-    self.addBadgeToDock(controller: controller)
 
     UNUserNotificationCenter.current().delegate = self
     Task {
@@ -161,18 +159,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
     completionHandler([.banner, .sound])
   }
 
-  func addBadgeToDock(controller: MVTimerController) {
-    if self.currentlyInDock != controller {
-      self.removeBadgeFromDock()
-    }
-    self.currentlyInDock = controller
-    controller.showInDock(true)
-  }
-
-  func removeBadgeFromDock() {
-    self.currentlyInDock?.showInDock(false)
-  }
-
   @objc func newDocument(_: AnyObject?) {
     let controller = MVTimerController(closeToWindow: NSApplication.shared.keyWindow)
     controller.window?.level = self.windowLevel
@@ -182,7 +168,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
   private func handleClose(_ notification: Notification) {
     if let window = notification.object as? NSWindow,
       let controller = window.windowController as? MVTimerController,
-      controller != self.currentlyInDock,
       let index = self.controllers.firstIndex(of: controller) {
       self.controllers.remove(at: index)
     }

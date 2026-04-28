@@ -27,14 +27,6 @@ final class MVClockView: NSView {
 
   var inputSeconds: Bool = false
   var lastTimerSeconds: CGFloat?
-  var inDock: Bool = false {
-    didSet {
-      if !self.inDock {
-        self.removeBadge()
-      }
-      self.updateBadge()
-    }
-  }
   var windowIsVisible: Bool = false {
     didSet {
       if self.windowIsVisible {
@@ -62,7 +54,6 @@ final class MVClockView: NSView {
         self.updateLabels()
         self.layoutSubviews()
       }
-      self.updateBadge()
     }
   }
 
@@ -219,22 +210,6 @@ extension MVClockView {
     var frame = self.timerDisplayLabel.frame
     frame.origin.x = round((self.bounds.width - frame.size.width) / 2)
     self.timerDisplayLabel.frame = frame
-  }
-
-  private func updateBadge() {
-    if self.inDock {
-      if self.timerTask != nil || self.paused {
-        let badgeSeconds = Int(self.seconds.truncatingRemainder(dividingBy: 60))
-        let badgeMinutes = Int(self.minutes)
-        NSApplication.shared.dockTile.badgeLabel = TimerLogic.badgeString(minutes: badgeMinutes, seconds: badgeSeconds)
-      } else {
-        self.removeBadge()
-      }
-    }
-  }
-
-  func removeBadge() {
-    NSApplication.shared.dockTile.badgeLabel = ""
   }
 
   override func hitTest(_ aPoint: NSPoint) -> NSView? {

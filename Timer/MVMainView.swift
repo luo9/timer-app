@@ -8,7 +8,6 @@ final class MVMainView: NSView {
 
   weak var controller: MVTimerController?
   private let contextMenu = NSMenu(title: "Menu")
-  private(set) var menuItem: NSMenuItem?
 
   override var menu: NSMenu? {
     get { self.contextMenu }
@@ -18,11 +17,6 @@ final class MVMainView: NSView {
   override init(frame frameRect: NSRect) {
     super.init(frame: frameRect)
 
-    self.menuItem = NSMenuItem(
-      title: "Show timer badge in dock",
-      action: #selector(self.toggleShowInDock),
-      keyEquivalent: ""
-    )
     let submenu = NSMenu()
     let menuItemSoundChoice = NSMenuItem(
       title: "Sound",
@@ -42,26 +36,12 @@ final class MVMainView: NSView {
       soundItem.state = option.value == savedSoundIndex ? .on : .off
       submenu.addItem(soundItem)
     }
-    if let menuItem = self.menuItem {
-      self.contextMenu.addItem(menuItem)
-    }
     self.contextMenu.addItem(menuItemSoundChoice)
     self.contextMenu.setSubmenu(submenu, for: menuItemSoundChoice)
   }
 
   required init?(coder _: NSCoder) {
     fatalError("init(coder:) has not been implemented")
-  }
-
-  @objc func toggleShowInDock() {
-    guard let appDelegate = NSApplication.shared.delegate as? AppDelegate,
-          let controller = self.controller else { return }
-
-    if self.menuItem?.state == .on {
-      appDelegate.removeBadgeFromDock()
-    } else {
-      appDelegate.addBadgeToDock(controller: controller)
-    }
   }
 
   @objc func pickSound(_ sender: NSMenuItem) {
