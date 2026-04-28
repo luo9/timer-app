@@ -234,7 +234,7 @@ extension MVClockView {
   private func updateLabels() {
     self.timerDisplayLabel.string = TimerLogic.timerDisplayString(seconds: self.seconds)
     self.timerDisplayLabel.textColor = TimerLogic.isWarningState(seconds: self.seconds)
-      ? NSColor(resource: .timerWarning)
+      ? NSColor(resource: .timerWarningColor)
       : NSColor(resource: .minutes)
     self.timerDisplayLabel.sizeToFit()
 
