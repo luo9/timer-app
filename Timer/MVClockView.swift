@@ -3,8 +3,7 @@ import AppKit
 final class MVClockView: NSView {
   override var mouseDownCanMoveWindow: Bool { false }
 
-  private static let minutesFont = NSFont.monospacedDigitSystemFont(ofSize: 35, weight: .medium)
-  private static let secondsFont = NSFont.monospacedDigitSystemFont(ofSize: 15, weight: .regular)
+  private static let timerDisplayFont = NSFont.monospacedDigitSystemFont(ofSize: 30, weight: .medium)
 
   private let progressView = MVClockProgressView()
   private let arrowView = MVClockArrowView(center: CGPoint(x: 75, y: 75))
@@ -25,26 +24,15 @@ final class MVClockView: NSView {
     return label
   }()
 
-  private let minutesLabel: MVLabel = {
-    let label = MVLabel(frame: NSRect(x: 0, y: 57, width: 150, height: 30))
+  private let timerDisplayLabel: MVLabel = {
+    let label = MVLabel(frame: NSRect(x: 0, y: 57, width: 150, height: 25))
     label.string = ""
-    label.font = MVClockView.minutesFont
+    label.font = MVClockView.timerDisplayFont
     label.alignment = .center
     label.textColor = NSColor(resource: .minutes)
     return label
   }()
 
-  private let secondsLabel: MVLabel = {
-    let label = MVLabel(frame: NSRect(x: 0, y: 38, width: 150, height: 20))
-    label.font = MVClockView.secondsFont
-    label.alignment = .center
-    label.textColor = NSColor(resource: .seconds)
-    return label
-  }()
-
-  private let minutesLabelSuffixWidth = "'".size(withAttributes: [.font: MVClockView.minutesFont]).width
-  private let minutesLabelSecondsSuffixWidth = "\"".size(withAttributes: [.font: MVClockView.minutesFont]).width
-  private let secondsSuffixWidth = "'".size(withAttributes: [.font: MVClockView.secondsFont]).width
   private lazy var timerTimeLabelFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "jj:mm", options: 0, locale: Locale.current)
@@ -122,8 +110,7 @@ final class MVClockView: NSView {
     self.addSubview(self.clockFaceView)
     self.addSubview(self.pauseIconImageView)
     self.addSubview(self.timerTimeLabel)
-    self.addSubview(self.minutesLabel)
-    self.addSubview(self.secondsLabel)
+    self.addSubview(self.timerDisplayLabel)
 
     self.updateClockFaceView()
     self.updateAllViews()
