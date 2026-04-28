@@ -38,7 +38,7 @@ final class MVClockArrowView: NSView {
 
     path.transform(using: transform)
 
-    let color = (self.window?.isKeyWindow ?? false) ? Self.focusedColor : Self.unfocusedColor
+    let color = Self.focusedColor
     color.setFill()
     path.fill()
   }
