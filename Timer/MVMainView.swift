@@ -19,7 +19,7 @@ final class MVMainView: NSView {
 
     let submenu = NSMenu()
     let menuItemSoundChoice = NSMenuItem(
-      title: "Sound",
+      title: "End Sound",
       action: nil,
       keyEquivalent: ""
     )
@@ -38,6 +38,12 @@ final class MVMainView: NSView {
     }
     self.contextMenu.addItem(menuItemSoundChoice)
     self.contextMenu.setSubmenu(submenu, for: menuItemSoundChoice)
+    self.contextMenu.addItem(.separator())
+    self.contextMenu.addItem(NSMenuItem(
+      title: "Quit",
+      action: #selector(NSApplication.terminate(_:)),
+      keyEquivalent: ""
+    ))
   }
 
   required init?(coder _: NSCoder) {
