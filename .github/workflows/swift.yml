@@ -9,15 +9,22 @@ jobs:
     runs-on: macos-26
     env:
       ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
-
     steps:
-    - uses: actions/checkout@v6.0.2
-    - name: Clean
-      run: xcodebuild clean
-    - name: Build
-      run: xcodebuild build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
-    - name: upload artifact
-      uses: actions/upload-artifact@v7.0.1
-      with:
-        path: build/Release/Timer.app
+      - name: Checkout code
+        uses: actions/checkout@v6.0.2
+
+      - name: Clean project
+        run: xcodebuild clean
+
+      - name: Build project
+        run: xcodebuild build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+
+      - name: Zip up
+        run: |
+          cd ./build/Release/
+          zip -r "../../Timer.app.zip" "Timer.app/"
+      - name: upload artifact
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          path: build/Release/Timer.app.zip
   
