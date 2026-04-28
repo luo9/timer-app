@@ -256,4 +256,51 @@ final class TimerLogicTests: XCTestCase {
   func testAccessibilityTimeDescriptionZero() {
     XCTAssertEqual(TimerLogic.accessibilityTimeDescription(minutes: 0, seconds: 0), "0 seconds")
   }
+
+  // MARK: - timerDisplayString
+
+  func testTimerDisplayStringZero() {
+    XCTAssertEqual(TimerLogic.timerDisplayString(seconds: 0), "00:00")
+  }
+
+  func testTimerDisplayStringUnderOneMinute() {
+    XCTAssertEqual(TimerLogic.timerDisplayString(seconds: 45), "00:45")
+  }
+
+  func testTimerDisplayStringExactlyOneMinute() {
+    XCTAssertEqual(TimerLogic.timerDisplayString(seconds: 60), "01:00")
+  }
+
+  func testTimerDisplayStringMultipleMinutes() {
+    XCTAssertEqual(TimerLogic.timerDisplayString(seconds: 150), "02:30")
+  }
+
+  func testTimerDisplayStringLargeValue() {
+    XCTAssertEqual(TimerLogic.timerDisplayString(seconds: 3661), "61:01")
+  }
+
+  func testTimerDisplayStringDecimalSeconds() {
+    XCTAssertEqual(TimerLogic.timerDisplayString(seconds: 90.7), "01:30")
+  }
+
+  // MARK: - isWarningState
+
+  func testIsWarningStateTrue() {
+    XCTAssertTrue(TimerLogic.isWarningState(seconds: 0))
+    XCTAssertTrue(TimerLogic.isWarningState(seconds: 30))
+    XCTAssertTrue(TimerLogic.isWarningState(seconds: 59))
+    XCTAssertTrue(TimerLogic.isWarningState(seconds: 59.9))
+  }
+
+  func testIsWarningStateFalse() {
+    XCTAssertFalse(TimerLogic.isWarningState(seconds: 60))
+    XCTAssertFalse(TimerLogic.isWarningState(seconds: 61))
+    XCTAssertFalse(TimerLogic.isWarningState(seconds: 300))
+    XCTAssertFalse(TimerLogic.isWarningState(seconds: 3600))
+  }
+
+  func testIsWarningStateExactBoundary() {
+    XCTAssertTrue(TimerLogic.isWarningState(seconds: 59.999))
+    XCTAssertFalse(TimerLogic.isWarningState(seconds: 60.0))
+  }
 }

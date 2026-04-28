@@ -122,4 +122,16 @@ enum TimerLogic {
       return "alert-sound"
     }
   }
+
+  // MARK: - Unified Display
+
+  static func timerDisplayString(seconds: CGFloat) -> String {
+    let minutes = Int(floor(seconds / 60))
+    let secs = Int(seconds.truncatingRemainder(dividingBy: 60))
+    return String(format: "%02d:%02d", minutes, secs)
+  }
+
+  static func isWarningState(seconds: CGFloat) -> Bool {
+    return seconds < 60
+  }
 }
