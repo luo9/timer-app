@@ -112,11 +112,12 @@ final class MVWindow: NSWindow {
     if let closeButton = self.standardWindowButton(.closeButton) {
       var closeFrame = closeButton.frame
       closeFrame.origin.y -= 2
-      closeButton.frame = closeFrame
 
-      // Replace with always-active close button so it doesn't gray out on focus loss
-      let alwaysActiveButton = MVCloseButton(frame: closeButton.frame)
-      closeButton.superview?.replaceSubview(closeButton, with: alwaysActiveButton)
+      // Hide the system close button and overlay a custom one that never grays out
+      closeButton.isHidden = true
+
+      let alwaysActiveButton = MVCloseButton(frame: closeFrame)
+      closeButton.superview?.addSubview(alwaysActiveButton)
 
       // Add the main clock view as a sibling underneath the close button
       alwaysActiveButton.superview?.addSubview(mainView, positioned: .below, relativeTo: alwaysActiveButton)
