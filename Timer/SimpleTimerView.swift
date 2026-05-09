@@ -4,6 +4,14 @@ import AppKit
 final class SimpleTimerView: NSView {
   private static let displayFont = NSFont.monospacedDigitSystemFont(ofSize: 52, weight: .bold)
 
+  static let idealSize: NSSize = {
+    let font = NSFont.monospacedDigitSystemFont(ofSize: 52, weight: .bold)
+    let attrs: [NSAttributedString.Key: Any] = [.font: font]
+    let str = NSAttributedString(string: "00:00", attributes: attrs)
+    let bounds = str.boundingRect(with: NSSize(width: 600, height: 200), options: [])
+    return NSSize(width: ceil(bounds.width) + 32, height: ceil(bounds.height) + 16)
+  }()
+
   var onTimerComplete: (() -> Void)?
 
   var seconds: CGFloat = 0 {
@@ -49,7 +57,10 @@ final class SimpleTimerView: NSView {
 
   override func layout() {
     super.layout()
-    timeLabel.frame = bounds
+    let labelSize = timeLabel.intrinsicContentSize
+    let x = (bounds.width - labelSize.width) / 2
+    let y = (bounds.height - labelSize.height) / 2
+    timeLabel.frame = NSRect(x: x, y: y, width: labelSize.width, height: labelSize.height)
   }
 
   deinit {
@@ -64,19 +75,17 @@ final class SimpleTimerView: NSView {
 
   override func mouseUp(with event: NSEvent) {
     guard event.clickCount >= 2 else { return }
-    handleDoubleClick(event: event)
-  }
-
-  private func handleDoubleClick(event: NSEvent) {
     if timerTask != nil {
       paused = true
       stop()
     } else if paused, seconds > 0 {
       updateTimerTime()
       start()
-    } else {
-      showPresetMenu(event: event)
     }
+  }
+
+  override func rightMouseDown(with event: NSEvent) {
+    showPresetMenu(event: event)
   }
 
   private func showPresetMenu(event: NSEvent) {

@@ -2,12 +2,12 @@ import AppKit
 
 @MainActor
 final class SimpleTimerController: NSWindowController {
-  let timerView = SimpleTimerView(frame: NSRect(x: 0, y: 0, width: 260, height: 72))
+  let timerView = SimpleTimerView(frame: NSRect(origin: .zero, size: SimpleTimerView.idealSize))
 
   private var notificationTasks: [Task<Void, Never>] = []
 
   convenience init() {
-    let window = SimpleWindow(size: NSSize(width: 260, height: 72))
+    let window = SimpleWindow(size: SimpleTimerView.idealSize)
     self.init(window: window)
 
     window.contentView = self.timerView
