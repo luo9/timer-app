@@ -2,10 +2,11 @@ import AppKit
 
 @MainActor
 final class SimpleTimerView: NSView {
-  private static let displayFont = NSFont.monospacedDigitSystemFont(ofSize: 44, weight: .bold)
+  // monospacedSystemFont (SF Mono) ensures every character — including `_` — is the same width
+  private static let displayFont = NSFont.monospacedSystemFont(ofSize: 44, weight: .bold)
 
   static let idealSize: NSSize = {
-    let font = NSFont.monospacedDigitSystemFont(ofSize: 44, weight: .bold)
+    let font = NSFont.monospacedSystemFont(ofSize: 44, weight: .bold)
     let str = NSAttributedString(string: "00:00", attributes: [.font: font])
     let bounds = str.boundingRect(with: NSSize(width: 600, height: 200), options: [])
     return NSSize(width: ceil(bounds.width) + 32, height: ceil(bounds.height) + 16)
@@ -25,7 +26,7 @@ final class SimpleTimerView: NSView {
   var lastTimerSeconds: CGFloat?
 
   private var isEditing = false
-  private var inputBuffer: [Int] = []
+  private var inputBuffer: [Int] = []  // length == cursor position (0–4)
 
   var windowIsVisible = false {
     didSet {
@@ -125,6 +126,7 @@ final class SimpleTimerView: NSView {
     isEditing = true
     inputBuffer = []
     updateDisplay()
+    window?.makeKey()
     window?.makeFirstResponder(self)
   }
 
@@ -197,23 +199,34 @@ final class SimpleTimerView: NSView {
     }
   }
 
+  // Cursor is shown as `_` at inputBuffer.count position (blue).
+  // Digits already typed are black. Untyped slots show "0" in gray.
   private func showEditDisplay() {
-    let full = inputBuffer + Array(repeating: -1, count: 4 - inputBuffer.count)
-    let typed = NSColor.systemBlue
-    let placeholder = NSColor(white: 0.75, alpha: 1)
+    let cursorPos = inputBuffer.count
     let font = SimpleTimerView.displayFont
     let para = NSMutableParagraphStyle()
     para.alignment = .center
 
     let result = NSMutableAttributedString()
     func append(_ text: String, color: NSColor) {
-      result.append(NSAttributedString(string: text, attributes: [.font: font, .foregroundColor: color]))
+      result.append(NSAttributedString(string: text, attributes: [
+        .font: font, .foregroundColor: color,
+      ]))
     }
+
     for i in 0..<4 {
-      if i == 2 { append(":", color: placeholder) }
-      let d = full[i]
-      append(d >= 0 ? "\(d)" : "0", color: d >= 0 ? typed : placeholder)
+      if i == 2 {
+        append(":", color: NSColor(white: 0.75, alpha: 1))
+      }
+      if i < cursorPos {
+        append("\(inputBuffer[i])", color: .black)
+      } else if i == cursorPos {
+        append("_", color: .systemBlue)
+      } else {
+        append("0", color: NSColor(white: 0.75, alpha: 1))
+      }
     }
+
     result.addAttribute(.paragraphStyle, value: para, range: NSRange(location: 0, length: result.length))
     timeLabel.attributedStringValue = result
   }

@@ -19,4 +19,6 @@ final class SimpleWindow: NSWindow {
     self.isMovableByWindowBackground = true
     self.level = .floating
   }
+
+  override var canBecomeKey: Bool { true }
 }
