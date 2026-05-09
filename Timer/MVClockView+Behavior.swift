@@ -43,7 +43,7 @@ extension MVClockView {
 
   override func mouseUp(with event: NSEvent) {
     let point = self.convert(event.locationInWindow, from: nil)
-    if self.hitTest(point) == self, !self.didDrag {
+    if self.hitTest(point) == self, !self.didDrag, event.clickCount >= 2 {
       self.handleClick()
     }
     self.updateClockFaceView()

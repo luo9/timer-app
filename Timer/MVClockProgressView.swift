@@ -10,7 +10,7 @@ final class MVClockProgressView: NSView {
     }
   }
   convenience init() {
-    self.init(frame: NSRect(x: 0, y: 0, width: 116, height: 116))
+    self.init(frame: NSRect(x: 0, y: 0, width: 100, height: 100))
   }
 
   override func draw(_: NSRect) {

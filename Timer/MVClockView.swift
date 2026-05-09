@@ -6,18 +6,18 @@ final class MVClockView: NSView {
   private static let timerDisplayFont = NSFont.monospacedDigitSystemFont(ofSize: 30, weight: .medium)
 
   private let progressView = MVClockProgressView()
-  private let arrowView = MVClockArrowView(center: CGPoint(x: 75, y: 75))
-  private let clockFaceView = MVClockFaceView(frame: NSRect(x: 16, y: 15, width: 118, height: 118))
+  private let arrowView = MVClockArrowView(center: CGPoint(x: 65, y: 65))
+  private let clockFaceView = MVClockFaceView(frame: NSRect(x: 14, y: 13, width: 102, height: 102))
 
   private let pauseIconImageView: NSImageView = {
-    let view = NSImageView(frame: NSRect(x: 70, y: 99, width: 10, height: 12))
+    let view = NSImageView(frame: NSRect(x: 60, y: 86, width: 10, height: 12))
     view.image = NSImage(resource: .iconPause)
     view.alphaValue = 0.0
     return view
   }()
 
   private let timerDisplayLabel: MVLabel = {
-    let label = MVLabel(frame: NSRect(x: 0, y: 57, width: 150, height: 25))
+    let label = MVLabel(frame: NSRect(x: 0, y: 49, width: 130, height: 25))
     label.string = ""
     label.font = MVClockView.timerDisplayFont
     label.alignment = .center
@@ -69,7 +69,7 @@ final class MVClockView: NSView {
   // MARK: -
 
   convenience init() {
-    self.init(frame: NSRect(x: 0, y: 0, width: 150, height: 150))
+    self.init(frame: NSRect(x: 0, y: 0, width: 130, height: 130))
 
     self.center(self.progressView)
     self.addSubview(self.progressView)
