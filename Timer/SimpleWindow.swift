@@ -18,6 +18,7 @@ final class SimpleWindow: NSWindow {
     self.hasShadow = true
     self.isMovableByWindowBackground = true
     self.level = .floating
+    self.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
   }
 
   override var canBecomeKey: Bool { true }
