@@ -19,7 +19,6 @@
 		AA000001AAAA000100000001 /* TimerLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000001AAAA000000000001 /* TimerLogic.swift */; };
 		AA000002AAAA000100000002 /* TimerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002AAAA000000000002 /* TimerTests.swift */; };
 		BB000001BBBB000100000001 /* TimerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001BBBB000000000001 /* TimerUITests.swift */; };
-		DD000001DDDD000100000001 /* TimerScriptCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD000001DDDD000100000000 /* TimerScriptCommand.swift */; };
 		DD000002DDDD000200000001 /* Timer.sdef in Resources */ = {isa = PBXBuildFile; fileRef = DD000002DDDD000200000000 /* Timer.sdef */; };
 		CC000010CCCC001000000001 /* TimerUITestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC000010CCCC001000000000 /* TimerUITestCase.swift */; };
 		CC000011CCCC001100000001 /* TimerKeyboardInputTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC000011CCCC001100000000 /* TimerKeyboardInputTests.swift */; };
@@ -64,7 +63,6 @@
 		BB000003BBBB000300000001 /* TimerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TimerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC000010CCCC001000000000 /* TimerUITestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerUITestCase.swift; sourceTree = "<group>"; };
 		CC000011CCCC001100000000 /* TimerKeyboardInputTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerKeyboardInputTests.swift; sourceTree = "<group>"; };
-		DD000001DDDD000100000000 /* TimerScriptCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerScriptCommand.swift; sourceTree = "<group>"; };
 		DD000002DDDD000200000000 /* Timer.sdef */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Timer.sdef; sourceTree = "<group>"; };
 		EE000001EEEE000100000000 /* SimpleWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleWindow.swift; sourceTree = "<group>"; };
 		EE000002EEEE000200000000 /* SimpleTimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleTimerView.swift; sourceTree = "<group>"; };
@@ -126,7 +124,6 @@
 				4C6F0F201CAA3D8600E9A6F7 /* MVLabel.swift */,
 				723C0C571E12211000E7AE1E /* MVUserDefaultsKeys.swift */,
 				AA000001AAAA000000000001 /* TimerLogic.swift */,
-				DD000001DDDD000100000000 /* TimerScriptCommand.swift */,
 				DD000002DDDD000200000000 /* Timer.sdef */,
 				4C30BBFD1CA7C56500C45EBF /* Assets.xcassets */,
 				4C30BC021CA7C56500C45EBF /* Info.plist */,
@@ -300,7 +297,6 @@
 				EE000002EEEE000200000001 /* SimpleTimerView.swift in Sources */,
 				EE000003EEEE000300000001 /* SimpleTimerController.swift in Sources */,
 				AA000001AAAA000100000001 /* TimerLogic.swift in Sources */,
-				DD000001DDDD000100000001 /* TimerScriptCommand.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
