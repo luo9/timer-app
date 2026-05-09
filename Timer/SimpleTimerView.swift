@@ -2,11 +2,10 @@ import AppKit
 
 @MainActor
 final class SimpleTimerView: NSView {
-  // monospacedSystemFont (SF Mono) ensures every character — including `_` — is the same width
-  private static let displayFont = NSFont.monospacedSystemFont(ofSize: 44, weight: .bold)
+  private static let displayFont = NSFont.monospacedSystemFont(ofSize: 36, weight: .bold)
 
   static let idealSize: NSSize = {
-    let font = NSFont.monospacedSystemFont(ofSize: 44, weight: .bold)
+    let font = NSFont.monospacedSystemFont(ofSize: 36, weight: .bold)
     let str = NSAttributedString(string: "00:00", attributes: [.font: font])
     let bounds = str.boundingRect(with: NSSize(width: 600, height: 200), options: [])
     return NSSize(width: ceil(bounds.width) + 32, height: ceil(bounds.height) + 16)
@@ -25,8 +24,11 @@ final class SimpleTimerView: NSView {
   var timerTime: Date?
   var lastTimerSeconds: CGFloat?
 
+  private var countingUp = false
+  private var countUpStartTime: Date?
+
   private var isEditing = false
-  private var inputBuffer: [Int] = []  // length == cursor position (0–4)
+  private var inputBuffer: [Int] = []
 
   var windowIsVisible = false {
     didSet {
@@ -107,8 +109,7 @@ final class SimpleTimerView: NSView {
     default:
       if let char = event.characters?.first, let digit = Int(String(char)) {
         guard inputBuffer.count < 4 else { return }
-        // tens-of-seconds slot: only 0–5 valid
-        if inputBuffer.count == 2, digit > 5 { return }
+        if inputBuffer.count == 2, digit > 5 { return }  // tens-of-seconds: 0–5 only
         inputBuffer.append(digit)
         updateDisplay()
       }
@@ -151,6 +152,7 @@ final class SimpleTimerView: NSView {
   private func cancelEdit() {
     isEditing = false
     inputBuffer = []
+    seconds = 0
     updateDisplay()
     window?.makeFirstResponder(nil)
   }
@@ -187,20 +189,19 @@ final class SimpleTimerView: NSView {
   private func updateDisplay() {
     if isEditing {
       showEditDisplay()
+      return
+    }
+    timeLabel.string = TimerLogic.timerDisplayString(seconds: seconds)
+    if countingUp || seconds <= 0 {
+      timeLabel.textColor = .red
+    } else if TimerLogic.isWarningState(seconds: seconds) {
+      timeLabel.textColor = NSColor(red: 1.0, green: 0.5, blue: 0, alpha: 1)
     } else {
-      timeLabel.string = TimerLogic.timerDisplayString(seconds: seconds)
-      if seconds <= 0 {
-        timeLabel.textColor = .red
-      } else if TimerLogic.isWarningState(seconds: seconds) {
-        timeLabel.textColor = NSColor(red: 1.0, green: 0.5, blue: 0, alpha: 1)
-      } else {
-        timeLabel.textColor = .black
-      }
+      timeLabel.textColor = .black
     }
   }
 
-  // Cursor is shown as `_` at inputBuffer.count position (blue).
-  // Digits already typed are black. Untyped slots show "0" in gray.
+  // Cursor `_` at inputBuffer.count (blue). Typed digits black. Untyped slots gray "0".
   private func showEditDisplay() {
     let cursorPos = inputBuffer.count
     let font = SimpleTimerView.displayFont
@@ -209,15 +210,11 @@ final class SimpleTimerView: NSView {
 
     let result = NSMutableAttributedString()
     func append(_ text: String, color: NSColor) {
-      result.append(NSAttributedString(string: text, attributes: [
-        .font: font, .foregroundColor: color,
-      ]))
+      result.append(NSAttributedString(string: text, attributes: [.font: font, .foregroundColor: color]))
     }
 
     for i in 0..<4 {
-      if i == 2 {
-        append(":", color: NSColor(white: 0.75, alpha: 1))
-      }
+      if i == 2 { append(":", color: NSColor(white: 0.75, alpha: 1)) }
       if i < cursorPos {
         append("\(inputBuffer[i])", color: .black)
       } else if i == cursorPos {
@@ -257,14 +254,32 @@ final class SimpleTimerView: NSView {
   func stop() {
     timerTask?.cancel()
     timerTask = nil
+    countingUp = false
+    countUpStartTime = nil
   }
 
   private func tick() {
-    guard let timerTime else { return }
-    seconds = max(0, round(CGFloat(timerTime.timeIntervalSinceNow)))
-    if seconds <= 0 {
-      stop()
-      onTimerComplete?()
+    if countingUp {
+      guard let countUpStartTime else { return }
+      seconds = round(CGFloat(Date().timeIntervalSince(countUpStartTime)))
+    } else {
+      guard let timerTime else { return }
+      seconds = max(0, round(CGFloat(timerTime.timeIntervalSinceNow)))
+      if seconds <= 0 {
+        stop()
+        startCountUp()
+      }
+    }
+  }
+
+  private func startCountUp() {
+    countingUp = true
+    countUpStartTime = Date()
+    timerTask = Task { [weak self] in
+      while !Task.isCancelled {
+        try? await Task.sleep(for: .seconds(1), tolerance: .milliseconds(30))
+        self?.tick()
+      }
     }
   }
 
