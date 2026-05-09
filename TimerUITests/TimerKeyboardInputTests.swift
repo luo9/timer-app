@@ -1,152 +1,55 @@
 import XCTest
 
-final class TimerKeyboardInputTests: TimerUITestCase {
-  // MARK: - Keyboard Input
-
-  func testEscapeClearsTimer() throws {
-    let window = app.windows.firstMatch
-
-    window.typeKey("3", modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.2)
-
-    window.typeKey(.escape, modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.2)
-
-    XCTAssertTrue(window.exists, "Window should still exist after escape")
+final class TimerSimpleUITests: TimerUITestCase {
+  func testInitialStateShowsZero() {
+    let label = app.staticTexts["00:00"]
+    XCTAssertTrue(label.waitForExistence(timeout: 2))
   }
 
-  func testEnterStartsTimer() throws {
+  func testDoubleClickOpensMenu() {
     let window = app.windows.firstMatch
-
-    window.typeKey("1", modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.2)
-
-    window.typeKey(.return, modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.3)
-
-    XCTAssertTrue(window.exists, "Window should still exist after starting timer")
+    window.doubleClick()
+    XCTAssertTrue(app.menuItems["1:00"].waitForExistence(timeout: 2))
   }
 
-  func testMultipleDigitsSetTimer() throws {
+  func testSelectPresetStartsCountdown() {
     let window = app.windows.firstMatch
-
-    window.typeKey("1", modifierFlags: [])
-    window.typeKey("2", modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.3)
-
-    XCTAssertTrue(window.exists, "Window should still exist after typing multiple digits")
+    window.doubleClick()
+    app.menuItems["5:00"].click()
+    let running = app.staticTexts.matching(
+      NSPredicate(format: "label BEGINSWITH '04' OR label == '05:00'")
+    ).firstMatch
+    XCTAssertTrue(running.waitForExistence(timeout: 3))
   }
 
-  func testPeriodTogglesSecondsInput() throws {
+  func testDoubleClickPausesRunningTimer() {
     let window = app.windows.firstMatch
-
-    window.typeKey(".", modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.2)
-
-    window.typeKey("3", modifierFlags: [])
-    window.typeKey("0", modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.2)
-
-    XCTAssertTrue(window.exists, "Window should still exist after seconds input")
+    window.doubleClick()
+    app.menuItems["5:00"].click()
+    sleep(2)
+    window.doubleClick()
+    let displayAfterPause = app.staticTexts.firstMatch.label
+    sleep(2)
+    XCTAssertEqual(
+      app.staticTexts.firstMatch.label,
+      displayAfterPause,
+      "Display should not change while paused"
+    )
   }
 
-  func testRKeyRestartsLastTimer() throws {
+  func testDoubleClickResumesFromPause() {
     let window = app.windows.firstMatch
-
-    window.typeKey("1", modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.2)
-    window.typeKey(.return, modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.5)
-
-    window.typeKey(.escape, modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.2)
-
-    window.typeKey("r", modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.3)
-
-    XCTAssertTrue(window.exists, "Window should still exist after restart")
-  }
-
-  func testMaxTimerLimitViaKeyboard() throws {
-    let window = app.windows.firstMatch
-
-    // Type 999 minutes (max allowed by keyboard input)
-    window.typeKey("9", modifierFlags: [])
-    window.typeKey("9", modifierFlags: [])
-    window.typeKey("9", modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.2)
-
-    // Try to type another digit (should be rejected, 9990 > 999*60)
-    window.typeKey("9", modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.2)
-
-    XCTAssertTrue(window.exists, "Window should still exist after max keyboard input")
-
-    window.typeKey(.return, modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.5)
-    window.typeKey(.escape, modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.2)
-
-    XCTAssertTrue(window.exists, "Window should exist after starting max timer")
-  }
-
-  // MARK: - Decimal & Seconds Input
-
-  func testDecimalWithMinutesAndSeconds() throws {
-    let window = app.windows.firstMatch
-
-    window.typeKey("5", modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.2)
-    window.typeKey(".", modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.2)
-    window.typeKey("3", modifierFlags: [])
-    window.typeKey("0", modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.2)
-
-    window.typeKey(.return, modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.5)
-
-    XCTAssertTrue(window.exists, "Window should exist with 5:30 timer")
-
-    window.typeKey(.escape, modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.2)
-  }
-
-  func testDoublePeriodTogglesBackToMinutes() throws {
-    let window = app.windows.firstMatch
-
-    window.typeKey(".", modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.2)
-    window.typeKey(".", modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.2)
-
-    window.typeKey("5", modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.2)
-
-    window.typeKey(.return, modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.5)
-
-    XCTAssertTrue(window.exists, "Window should exist after double period toggle")
-
-    window.typeKey(.escape, modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.2)
-  }
-
-  func testMaxSecondsInput() throws {
-    let window = app.windows.firstMatch
-
-    window.typeKey(".", modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.2)
-    window.typeKey("5", modifierFlags: [])
-    window.typeKey("9", modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.2)
-
-    window.typeKey(.return, modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.5)
-
-    XCTAssertTrue(window.exists, "Window should exist with 59 second timer")
-
-    window.typeKey(.escape, modifierFlags: [])
-    Thread.sleep(forTimeInterval: 0.2)
+    window.doubleClick()
+    app.menuItems["5:00"].click()
+    sleep(2)
+    window.doubleClick()
+    let pausedValue = app.staticTexts.firstMatch.label
+    window.doubleClick()
+    sleep(2)
+    XCTAssertNotEqual(
+      app.staticTexts.firstMatch.label,
+      pausedValue,
+      "Timer should resume counting down"
+    )
   }
 }
