@@ -1,5 +1,6 @@
 import AppKit
 
+@MainActor
 final class SimpleTimerController: NSWindowController {
   let timerView = SimpleTimerView(frame: NSRect(x: 0, y: 0, width: 260, height: 72))
 

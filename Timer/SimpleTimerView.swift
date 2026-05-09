@@ -1,5 +1,6 @@
 import AppKit
 
+@MainActor
 final class SimpleTimerView: NSView {
   private static let displayFont = NSFont.monospacedDigitSystemFont(ofSize: 52, weight: .bold)
 
