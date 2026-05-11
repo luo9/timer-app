@@ -17,8 +17,11 @@ final class SimpleWindow: NSWindow {
     self.isOpaque = false
     self.hasShadow = true
     self.isMovableByWindowBackground = true
-    self.level = .floating
-    self.collectionBehavior = [.managed, .fullScreenAuxiliary]
+    // .screenSaver level (1000) ensures the window is above full-screen app content.
+    // canJoinAllSpaces makes it visible on every Space automatically, so no Mission
+    // Control drag is needed — it is already present on the full-screen Space.
+    self.level = .screenSaver
+    self.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
   }
 
   override var canBecomeKey: Bool { true }
