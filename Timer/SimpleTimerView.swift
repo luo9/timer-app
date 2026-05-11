@@ -88,6 +88,14 @@ final class SimpleTimerView: NSView {
     enterEditMode()
   }
 
+  override func rightMouseUp(with event: NSEvent) {
+    if timerTask != nil {
+      pause()
+    } else if paused {
+      resume()
+    }
+  }
+
   // MARK: - Edit Mode
 
   override func keyDown(with event: NSEvent) {
