@@ -1,38 +1,57 @@
-# A simple Timer app for Mac
+# Timer — macOS 菜单栏计时器
 
-<img src="/screenshots/light-mode.png?raw=true" width="262" align="right">
+一款轻量的 macOS 菜单栏计时器，以悬浮小窗口显示在所有桌面空间（Spaces）最顶层，随时可见。
 
-<img src="/screenshots/dark-mode.png?raw=true" width="262" align="right">
+| 悬浮窗口 | 菜单栏 |
+|:---:|:---:|
+| <img src="/screenshots/float-window.png" width="200"> | <img src="/screenshots/menubar.png" width="160"> |
 
-[Download here](https://github.com/michaelvillar/timer-app/releases)
+## 核心功能
 
-Drag the blue arrow to set a timer. Release to start! Click to pause.
+### 悬浮窗口
+- 圆角白色小窗，显示 `MM:SS` 格式时间，始终置顶、跨所有 Spaces 可见
+- 窗口可自由拖拽，位置在会话间保留
+- 颜色状态一览：
+  - 黑色 — 正常倒计时
+  - 橙色 — 最后 60 秒警告
+  - 红色 — 倒计时结束后转为正向计时（超时计时），或正向计时模式
+  - 灰色 — 暂停中
 
-When the time is up, a notification will show up with a nice sound.
+### 计时模式
+- **倒计时**：设定时间后开始倒计，归零后自动转为正向超时计时（红色）
+- **正向计时**：从 0 开始向上计时，通过菜单栏"启动正向计时"触发
 
-Create new timers with `CMD+N`.
+### 交互操作
+- **双击**窗口进入编辑模式，输入 4 位数字（`MMSS`）设置倒计时，蓝色光标提示当前输入位
+- **双指轻点**（右键）窗口暂停 / 继续计时
+- **回车**确认输入，**Escape** 取消编辑
 
-Install as a [brew cask](https://caskroom.github.io) via 
+### 菜单栏
+点击菜单栏图标弹出菜单，支持：
+- 隐藏 / 显示计时窗口
+- 启动正向计时
+- 暂停 / 继续计时
+- 快速预设：5 / 10 / 15 / 20 / 25 / 30 分钟倒计时
+- 计时进行中时，菜单栏图标旁实时显示剩余时间（等宽字体）
 
-```shell
-brew install michaelvillar-timer
+### 通知
+倒计时归零时发送系统通知（横幅 + 声音）。
+
+## 系统要求
+
+macOS 14 (Sonoma) 或更高版本。
+
+## 构建
+
+```sh
+make        # 清理 → 构建 → 启动
+make build  # 仅构建
+make test   # 单元测试
 ```
 
-Inspired by the **great** [Minutes widget](http://minutes.en.softonic.com/mac) from Nitram-nunca I've been using for years. But it wasn't maintained anymore (non-retina) + it was the only widget in my dashboard :)
+其他命令：
 
-Timer requires macOS 14 (Sonoma) or later.
-
-### Build
-
+```sh
+make lint      # SwiftLint 检查
+make format    # 自动修复 SwiftLint 问题
 ```
-make
-```
-
-### Keyboard Shortcuts
-
-Enter digits to set minutes. A decimal point specifies seconds so `2.34` is 2 minutes and 34 seconds.
-
-<kbd>backspace</kbd> or <kbd>escape</kbd> to edit.
-<kbd>enter</kbd> to start or pause the timer.
-<kbd>cmd</kbd>+<kbd>n</kbd> to create a new timer.
-<kbd>r</kbd> to restart with the last timer.
