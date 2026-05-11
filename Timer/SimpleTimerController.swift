@@ -35,15 +35,44 @@ final class SimpleTimerController: NSWindowController {
       image?.isTemplate = true
       button.image = image
     }
+    item.menu = buildStatusMenu()
     statusItem = item
+  }
+
+  private func buildStatusMenu() -> NSMenu {
+    let menu = NSMenu()
+    for minutes in stride(from: 5, through: 30, by: 5) {
+      let item = NSMenuItem(
+        title: String(format: "%d:00", minutes),
+        action: #selector(selectPreset(_:)),
+        keyEquivalent: ""
+      )
+      item.tag = minutes * 60
+      item.target = self
+      menu.addItem(item)
+    }
+    menu.addItem(.separator())
+    menu.addItem(NSMenuItem(
+      title: "Quit",
+      action: #selector(NSApplication.terminate(_:)),
+      keyEquivalent: ""
+    ))
+    return menu
+  }
+
+  @objc private func selectPreset(_ sender: NSMenuItem) {
+    timerView.startTimer(seconds: CGFloat(sender.tag))
+    window?.orderFrontRegardless()
   }
 
   private func updateStatusItem() {
     guard let button = statusItem?.button else { return }
     if timerView.isActive {
-      button.title = " " + TimerLogic.timerDisplayString(seconds: timerView.seconds)
+      let text = " " + TimerLogic.timerDisplayString(seconds: timerView.seconds)
+      let font = NSFont.monospacedDigitSystemFont(ofSize: NSFont.systemFontSize, weight: .regular)
+      button.attributedTitle = NSAttributedString(string: text, attributes: [.font: font])
     } else {
-      button.title = ""
+      button.attributedTitle = NSAttributedString(string: "")
     }
   }
 
