@@ -87,11 +87,6 @@ final class SimpleTimerView: NSView {
     enterEditMode()
   }
 
-  override func rightMouseDown(with event: NSEvent) {
-    if isEditing { cancelEdit() }
-    showPresetMenu(event: event)
-  }
-
   // MARK: - Edit Mode
 
   override func keyDown(with event: NSEvent) {
@@ -158,33 +153,6 @@ final class SimpleTimerView: NSView {
     seconds = 0
     updateDisplay()
     window?.makeFirstResponder(nil)
-  }
-
-  // MARK: - Preset Menu
-
-  private func showPresetMenu(event: NSEvent) {
-    let menu = NSMenu()
-    for minutes in stride(from: 5, through: 30, by: 5) {
-      let item = NSMenuItem(
-        title: String(format: "%d:00", minutes),
-        action: #selector(selectPreset(_:)),
-        keyEquivalent: ""
-      )
-      item.tag = minutes * 60
-      item.target = self
-      menu.addItem(item)
-    }
-    menu.addItem(.separator())
-    menu.addItem(NSMenuItem(
-      title: "Quit",
-      action: #selector(NSApplication.terminate(_:)),
-      keyEquivalent: ""
-    ))
-    NSMenu.popUpContextMenu(menu, with: event, for: self)
-  }
-
-  @objc private func selectPreset(_ sender: NSMenuItem) {
-    startTimer(seconds: CGFloat(sender.tag))
   }
 
   // MARK: - Display
