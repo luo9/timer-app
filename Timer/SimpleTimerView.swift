@@ -29,6 +29,7 @@ final class SimpleTimerView: NSView {
 
   private var countingUp = false
   private var countUpStartTime: Date?
+  private var pausedFromCountUp = false
 
   private var isEditing = false
   private var inputBuffer: [Int] = []
@@ -243,6 +244,38 @@ final class SimpleTimerView: NSView {
     timerTask = nil
     countingUp = false
     countUpStartTime = nil
+    pausedFromCountUp = false
+  }
+
+  func pause() {
+    guard timerTask != nil else { return }
+    pausedFromCountUp = countingUp
+    paused = true
+    timerTask?.cancel()
+    timerTask = nil
+    countingUp = false
+    countUpStartTime = nil
+  }
+
+  func resume() {
+    guard paused else { return }
+    paused = false
+    if pausedFromCountUp {
+      pausedFromCountUp = false
+      countingUp = true
+      countUpStartTime = Date(timeIntervalSinceNow: -Double(seconds))
+      timerTask = Task { [weak self] in
+        while !Task.isCancelled {
+          try? await Task.sleep(for: .seconds(1), tolerance: .milliseconds(30))
+          self?.tick()
+        }
+      }
+      updateDisplay()
+    } else {
+      pausedFromCountUp = false
+      updateTimerTime()
+      start()
+    }
   }
 
   private func tick() {

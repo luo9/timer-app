@@ -111,11 +111,9 @@ final class SimpleTimerController: NSWindowController {
 
   @objc private func togglePause() {
     if timerView.timerTask != nil {
-      timerView.paused = true
-      timerView.stop()
-    } else if timerView.paused, timerView.seconds > 0 {
-      timerView.updateTimerTime()
-      timerView.start()
+      timerView.pause()
+    } else if timerView.paused {
+      timerView.resume()
     }
   }
 
