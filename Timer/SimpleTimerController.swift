@@ -95,12 +95,10 @@ final class SimpleTimerController: NSWindowController {
 
   @objc private func startCountingUp() {
     timerView.startCountingUpFromZero()
-    window?.orderFrontRegardless()
   }
 
   @objc private func selectPreset(_ sender: NSMenuItem) {
     timerView.startTimer(seconds: CGFloat(sender.tag))
-    window?.orderFrontRegardless()
   }
 
   private func updateStatusItem() {
