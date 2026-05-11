@@ -2,13 +2,13 @@ import AppKit
 
 @MainActor
 final class SimpleTimerView: NSView {
-  private static let displayFont = NSFont.monospacedSystemFont(ofSize: 36, weight: .bold)
+  private static let displayFont = NSFont.monospacedSystemFont(ofSize: 29, weight: .bold)
 
   static let idealSize: NSSize = {
-    let font = NSFont.monospacedSystemFont(ofSize: 36, weight: .bold)
+    let font = NSFont.monospacedSystemFont(ofSize: 29, weight: .bold)
     let str = NSAttributedString(string: "00:00", attributes: [.font: font])
     let bounds = str.boundingRect(with: NSSize(width: 600, height: 200), options: [])
-    return NSSize(width: ceil(bounds.width) + 32, height: ceil(bounds.height) + 16)
+    return NSSize(width: ceil(bounds.width) + 20, height: ceil(bounds.height) + 10)
   }()
 
   var onTimerComplete: (() -> Void)?
@@ -60,7 +60,7 @@ final class SimpleTimerView: NSView {
     super.init(frame: frame)
     wantsLayer = true
     layer?.backgroundColor = NSColor.white.cgColor
-    layer?.cornerRadius = 14
+    layer?.cornerRadius = 10
     addSubview(timeLabel)
   }
 
