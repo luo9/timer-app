@@ -260,6 +260,7 @@ final class SimpleTimerView: NSView {
   func stopAndReset() {
     stop()
     paused = false
+    timerTime = nil  // prevents stale tick from restarting via startCountUp()
     seconds = 0
     updateDisplay()
   }
