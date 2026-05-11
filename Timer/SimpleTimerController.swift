@@ -42,6 +42,7 @@ final class SimpleTimerController: NSWindowController {
 
   private static let toggleWindowMenuTag = 100
   private static let pauseResumeMenuTag = 101
+  private static let stopMenuTag = 102
 
   private func buildStatusMenu() -> NSMenu {
     let menu = NSMenu()
@@ -74,6 +75,15 @@ final class SimpleTimerController: NSWindowController {
     pauseItem.target = self
     pauseItem.tag = Self.pauseResumeMenuTag
     menu.addItem(pauseItem)
+
+    let stopItem = NSMenuItem(
+      title: "停止计时",
+      action: #selector(stopTimer),
+      keyEquivalent: ""
+    )
+    stopItem.target = self
+    stopItem.tag = Self.stopMenuTag
+    menu.addItem(stopItem)
 
     menu.addItem(.separator())
 
@@ -118,6 +128,10 @@ final class SimpleTimerController: NSWindowController {
     } else if timerView.paused {
       timerView.resume()
     }
+  }
+
+  @objc private func stopTimer() {
+    timerView.stopAndReset()
   }
 
   @objc private func selectPreset(_ sender: NSMenuItem) {
@@ -188,6 +202,9 @@ extension SimpleTimerController: NSMenuDelegate {
         pauseItem.title = "暂停计时"
         pauseItem.isEnabled = false
       }
+    }
+    if let stopItem = menu.item(withTag: Self.stopMenuTag) {
+      stopItem.isEnabled = timerView.timerTask != nil || timerView.paused
     }
   }
 }

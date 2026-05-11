@@ -257,6 +257,13 @@ final class SimpleTimerView: NSView {
     pausedFromCountUp = false
   }
 
+  func stopAndReset() {
+    stop()
+    paused = false
+    seconds = 0
+    updateDisplay()
+  }
+
   func pause() {
     guard timerTask != nil else { return }
     pausedFromCountUp = countingUp
