@@ -6,6 +6,7 @@ final class SimpleTimerController: NSWindowController {
 
   private var notificationTasks: [Task<Void, Never>] = []
   private var statusItem: NSStatusItem?
+  private var isWindowUserHidden = false
 
   convenience init() {
     let window = SimpleWindow(size: SimpleTimerView.idealSize)
@@ -99,8 +100,10 @@ final class SimpleTimerController: NSWindowController {
   @objc private func toggleFloatWindow() {
     guard let window else { return }
     if window.isVisible {
+      isWindowUserHidden = true
       window.orderOut(nil)
     } else {
+      isWindowUserHidden = false
       window.orderFrontRegardless()
     }
   }
@@ -140,6 +143,7 @@ final class SimpleTimerController: NSWindowController {
         for await _ in NSWorkspace.shared.notificationCenter.notifications(
           named: NSWorkspace.activeSpaceDidChangeNotification
         ) {
+          guard self?.isWindowUserHidden == false else { continue }
           // Re-order immediately so the window is visible as soon as the Space
           // becomes active.
           self?.window?.orderFrontRegardless()
