@@ -234,6 +234,21 @@ final class SimpleTimerView: NSView {
 
   // MARK: - Timer
 
+  func startCountingUpFromZero() {
+    paused = false
+    stop()
+    seconds = 0
+    countingUp = true
+    countUpStartTime = Date()
+    timerTask = Task { [weak self] in
+      while !Task.isCancelled {
+        try? await Task.sleep(for: .seconds(1), tolerance: .milliseconds(30))
+        self?.tick()
+      }
+    }
+    updateDisplay()
+  }
+
   func startTimer(seconds: CGFloat) {
     paused = false
     stop()

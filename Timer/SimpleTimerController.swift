@@ -39,11 +39,34 @@ final class SimpleTimerController: NSWindowController {
     statusItem = item
   }
 
+  private static let toggleWindowMenuTag = 100
+
   private func buildStatusMenu() -> NSMenu {
     let menu = NSMenu()
+    menu.delegate = self
+
+    let toggleItem = NSMenuItem(
+      title: "隐藏计时窗口",
+      action: #selector(toggleFloatWindow),
+      keyEquivalent: ""
+    )
+    toggleItem.target = self
+    toggleItem.tag = Self.toggleWindowMenuTag
+    menu.addItem(toggleItem)
+
+    let countUpItem = NSMenuItem(
+      title: "启动正向计时",
+      action: #selector(startCountingUp),
+      keyEquivalent: ""
+    )
+    countUpItem.target = self
+    menu.addItem(countUpItem)
+
+    menu.addItem(.separator())
+
     for minutes in stride(from: 5, through: 30, by: 5) {
       let item = NSMenuItem(
-        title: String(format: "%d:00", minutes),
+        title: "倒计时\(minutes)分钟",
         action: #selector(selectPreset(_:)),
         keyEquivalent: ""
       )
@@ -51,6 +74,7 @@ final class SimpleTimerController: NSWindowController {
       item.target = self
       menu.addItem(item)
     }
+
     menu.addItem(.separator())
     menu.addItem(NSMenuItem(
       title: "Quit",
@@ -58,6 +82,20 @@ final class SimpleTimerController: NSWindowController {
       keyEquivalent: ""
     ))
     return menu
+  }
+
+  @objc private func toggleFloatWindow() {
+    guard let window else { return }
+    if window.isVisible {
+      window.orderOut(nil)
+    } else {
+      window.orderFrontRegardless()
+    }
+  }
+
+  @objc private func startCountingUp() {
+    timerView.startCountingUpFromZero()
+    window?.orderFrontRegardless()
   }
 
   @objc private func selectPreset(_ sender: NSMenuItem) {
@@ -75,6 +113,8 @@ final class SimpleTimerController: NSWindowController {
       button.attributedTitle = NSAttributedString(string: "")
     }
   }
+
+  // MARK: - Space / Occlusion observers
 
   private func observeSpaceChanges() {
     self.notificationTasks.append(
@@ -107,5 +147,12 @@ final class SimpleTimerController: NSWindowController {
         }
       }
     )
+  }
+}
+
+extension SimpleTimerController: NSMenuDelegate {
+  func menuWillOpen(_ menu: NSMenu) {
+    guard let toggleItem = menu.item(withTag: Self.toggleWindowMenuTag) else { return }
+    toggleItem.title = (window?.isVisible == true) ? "隐藏计时窗口" : "显示计时窗口"
   }
 }
