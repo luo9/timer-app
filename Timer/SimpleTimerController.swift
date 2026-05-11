@@ -30,9 +30,13 @@ final class SimpleTimerController: NSWindowController {
         for await _ in NSWorkspace.shared.notificationCenter.notifications(
           named: NSWorkspace.activeSpaceDidChangeNotification
         ) {
-          // moveToActiveSpace only moves the window when ordered front.
-          // Calling orderFrontRegardless() here ensures the timer moves into
-          // whichever Space just became active, including full-screen app Spaces.
+          // Re-order immediately so the window is visible as soon as the Space
+          // becomes active.
+          self?.window?.orderFrontRegardless()
+          // Full-screen transition animations take ~0.5 s and the entering app's
+          // window can reset z-order after the notification fires.  A second
+          // re-order after the animation settles ensures we stay on top.
+          try? await Task.sleep(for: .milliseconds(600))
           self?.window?.orderFrontRegardless()
         }
       }

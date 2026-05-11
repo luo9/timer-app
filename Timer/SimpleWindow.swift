@@ -17,13 +17,11 @@ final class SimpleWindow: NSWindow {
     self.isOpaque = false
     self.hasShadow = true
     self.isMovableByWindowBackground = true
-    self.level = .screenSaver
-    // moveToActiveSpace: when ordered front the window moves to the currently active
-    // Space, including a full-screen app's dedicated Space.
-    // fullScreenAuxiliary: the window is allowed to appear in full-screen Spaces.
-    // canJoinAllSpaces cannot reach another app's full-screen Space, so we use
-    // moveToActiveSpace + an observer in the controller instead.
-    self.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]
+    // kCGMaximumWindowLevel (2147483631) is the highest level the window system
+    // exposes; it sits above screenSaver (1000) and may bypass full-screen Space
+    // isolation that blocked lower levels.
+    self.level = NSWindow.Level(rawValue: 2147483631)
+    self.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
   }
 
   override var canBecomeKey: Bool { true }
