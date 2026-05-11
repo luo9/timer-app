@@ -279,6 +279,7 @@ final class SimpleTimerView: NSView {
   }
 
   private func tick() {
+    guard !paused else { return }
     if countingUp {
       guard let countUpStartTime else { return }
       seconds = round(CGFloat(Date().timeIntervalSince(countUpStartTime)))
