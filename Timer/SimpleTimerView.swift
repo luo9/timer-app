@@ -164,7 +164,9 @@ final class SimpleTimerView: NSView {
       return
     }
     timeLabel.string = TimerLogic.timerDisplayString(seconds: seconds)
-    if countingUp || seconds <= 0 {
+    if paused {
+      timeLabel.textColor = .systemGray
+    } else if countingUp || seconds <= 0 {
       timeLabel.textColor = .red
     } else if TimerLogic.isWarningState(seconds: seconds) {
       timeLabel.textColor = NSColor(red: 1.0, green: 0.5, blue: 0, alpha: 1)
@@ -255,6 +257,7 @@ final class SimpleTimerView: NSView {
     timerTask = nil
     countingUp = false
     countUpStartTime = nil
+    updateDisplay()
   }
 
   func resume() {
@@ -275,6 +278,7 @@ final class SimpleTimerView: NSView {
       pausedFromCountUp = false
       updateTimerTime()
       start()
+      updateDisplay()
     }
   }
 
