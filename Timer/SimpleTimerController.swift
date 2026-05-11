@@ -40,6 +40,7 @@ final class SimpleTimerController: NSWindowController {
   }
 
   private static let toggleWindowMenuTag = 100
+  private static let pauseResumeMenuTag = 101
 
   private func buildStatusMenu() -> NSMenu {
     let menu = NSMenu()
@@ -61,6 +62,17 @@ final class SimpleTimerController: NSWindowController {
     )
     countUpItem.target = self
     menu.addItem(countUpItem)
+
+    menu.addItem(.separator())
+
+    let pauseItem = NSMenuItem(
+      title: "暂停计时",
+      action: #selector(togglePause),
+      keyEquivalent: ""
+    )
+    pauseItem.target = self
+    pauseItem.tag = Self.pauseResumeMenuTag
+    menu.addItem(pauseItem)
 
     menu.addItem(.separator())
 
@@ -95,6 +107,16 @@ final class SimpleTimerController: NSWindowController {
 
   @objc private func startCountingUp() {
     timerView.startCountingUpFromZero()
+  }
+
+  @objc private func togglePause() {
+    if timerView.timerTask != nil {
+      timerView.paused = true
+      timerView.stop()
+    } else if timerView.paused, timerView.seconds > 0 {
+      timerView.updateTimerTime()
+      timerView.start()
+    }
   }
 
   @objc private func selectPreset(_ sender: NSMenuItem) {
@@ -150,7 +172,20 @@ final class SimpleTimerController: NSWindowController {
 
 extension SimpleTimerController: NSMenuDelegate {
   func menuWillOpen(_ menu: NSMenu) {
-    guard let toggleItem = menu.item(withTag: Self.toggleWindowMenuTag) else { return }
-    toggleItem.title = (window?.isVisible == true) ? "隐藏计时窗口" : "显示计时窗口"
+    if let toggleItem = menu.item(withTag: Self.toggleWindowMenuTag) {
+      toggleItem.title = (window?.isVisible == true) ? "隐藏计时窗口" : "显示计时窗口"
+    }
+    if let pauseItem = menu.item(withTag: Self.pauseResumeMenuTag) {
+      if timerView.timerTask != nil {
+        pauseItem.title = "暂停计时"
+        pauseItem.isEnabled = true
+      } else if timerView.paused, timerView.seconds > 0 {
+        pauseItem.title = "继续计时"
+        pauseItem.isEnabled = true
+      } else {
+        pauseItem.title = "暂停计时"
+        pauseItem.isEnabled = false
+      }
+    }
   }
 }
