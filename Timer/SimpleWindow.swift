@@ -17,11 +17,13 @@ final class SimpleWindow: NSWindow {
     self.isOpaque = false
     self.hasShadow = true
     self.isMovableByWindowBackground = true
-    // .screenSaver level (1000) ensures the window is above full-screen app content.
-    // canJoinAllSpaces makes it visible on every Space automatically, so no Mission
-    // Control drag is needed — it is already present on the full-screen Space.
     self.level = .screenSaver
-    self.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+    // moveToActiveSpace: when ordered front the window moves to the currently active
+    // Space, including a full-screen app's dedicated Space.
+    // fullScreenAuxiliary: the window is allowed to appear in full-screen Spaces.
+    // canJoinAllSpaces cannot reach another app's full-screen Space, so we use
+    // moveToActiveSpace + an observer in the controller instead.
+    self.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]
   }
 
   override var canBecomeKey: Bool { true }

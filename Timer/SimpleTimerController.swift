@@ -14,6 +14,7 @@ final class SimpleTimerController: NSWindowController {
     self.windowFrameAutosaveName = "SimpleTimerWindowFrame"
     window.makeKeyAndOrderFront(self)
     self.observeOcclusionState()
+    self.observeSpaceChanges()
   }
 
   deinit {
@@ -21,6 +22,21 @@ final class SimpleTimerController: NSWindowController {
       self.notificationTasks.forEach { $0.cancel() }
       self.timerView.stop()
     }
+  }
+
+  private func observeSpaceChanges() {
+    self.notificationTasks.append(
+      Task { [weak self] in
+        for await _ in NSWorkspace.shared.notificationCenter.notifications(
+          named: NSWorkspace.activeSpaceDidChangeNotification
+        ) {
+          // moveToActiveSpace only moves the window when ordered front.
+          // Calling orderFrontRegardless() here ensures the timer moves into
+          // whichever Space just became active, including full-screen app Spaces.
+          self?.window?.orderFrontRegardless()
+        }
+      }
+    )
   }
 
   private func observeOcclusionState() {
