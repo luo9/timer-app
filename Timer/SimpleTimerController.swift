@@ -5,6 +5,7 @@ final class SimpleTimerController: NSWindowController {
   let timerView = SimpleTimerView(frame: NSRect(origin: .zero, size: SimpleTimerView.idealSize))
 
   private var notificationTasks: [Task<Void, Never>] = []
+  private var statusItem: NSStatusItem?
 
   convenience init() {
     let window = SimpleWindow(size: SimpleTimerView.idealSize)
@@ -15,12 +16,34 @@ final class SimpleTimerController: NSWindowController {
     window.makeKeyAndOrderFront(self)
     self.observeOcclusionState()
     self.observeSpaceChanges()
+    self.setupStatusItem()
+    self.timerView.onDisplayChanged = { [weak self] in self?.updateStatusItem() }
+    self.updateStatusItem()
   }
 
   deinit {
     MainActor.assumeIsolated {
       self.notificationTasks.forEach { $0.cancel() }
       self.timerView.stop()
+    }
+  }
+
+  private func setupStatusItem() {
+    let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+    if let button = item.button {
+      let image = NSImage(systemSymbolName: "timer", accessibilityDescription: "Timer")
+      image?.isTemplate = true
+      button.image = image
+    }
+    statusItem = item
+  }
+
+  private func updateStatusItem() {
+    guard let button = statusItem?.button else { return }
+    if timerView.isActive {
+      button.title = " " + TimerLogic.timerDisplayString(seconds: timerView.seconds)
+    } else {
+      button.title = ""
     }
   }
 

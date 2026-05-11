@@ -12,6 +12,9 @@ final class SimpleTimerView: NSView {
   }()
 
   var onTimerComplete: (() -> Void)?
+  var onDisplayChanged: (() -> Void)?
+
+  var isActive: Bool { seconds > 0 || countingUp }
 
   var seconds: CGFloat = 0 {
     didSet { updateDisplay() }
@@ -199,6 +202,7 @@ final class SimpleTimerView: NSView {
     } else {
       timeLabel.textColor = .black
     }
+    onDisplayChanged?()
   }
 
   // Cursor `_` at inputBuffer.count (blue). Typed digits black. Untyped slots gray "0".
@@ -281,6 +285,7 @@ final class SimpleTimerView: NSView {
         self?.tick()
       }
     }
+    updateDisplay()
   }
 
   func updateTimerTime() {
